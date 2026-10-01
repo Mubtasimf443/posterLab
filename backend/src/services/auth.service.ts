@@ -1,12 +1,14 @@
 /* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
 
 import type { Request, Response } from "express";
-import { registrationSchema } from "../utils/zod-schema/auth.schema.ts";
+import { loginSchema, registrationSchema, verificationTokenSchema } from "../utils/zod-schema/auth.schema.ts";
 import User from "../models/User.ts";
 import crypto from 'crypto'
 import redisClient from "../config/radis.ts";
 import { sendRegistrationVerificationEmail } from "../utils/mails/auth.mails.ts";
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'
+import { JWT_SECRET, NODE_ENV } from "../config/env.ts";
 
 export default class authService {
     static async Register(req : Request , res : Response) {
@@ -22,7 +24,7 @@ export default class authService {
                     return res.status(403).json({ error: { message: 'You arleady have an account, please Login' }, success: false, data: null });
                 } else {
                     let token = crypto.randomBytes(48).toString('hex').normalize();
-                    let isTokenStored = await redisClient.set(`auth_verification_token:${token}`, JSON.stringify({ userID: existingUser._id }));
+                    let isTokenStored = await redisClient.set(`auth_verification_token:${token}`, JSON.stringify({ userID: existingUser._id }), 'EX', 100);
                     if (isTokenStored !== 'OK') {
                         return res.status(500).json({ error: { messsage: "Redis Client failed to store session"}, data : null , success : false });
                     }
@@ -39,7 +41,7 @@ export default class authService {
                 isVerified : false
             });
             let token = crypto.randomBytes(48).toString('hex').normalize();
-            let isTokenStored = await redisClient.set(`auth_verification_token:${token}`, JSON.stringify({ userID: user._id }));
+            let isTokenStored = await redisClient.set(`auth_verification_token:${token}`, JSON.stringify({ userID: user._id }), 'EX', 100);
             if (isTokenStored !== 'OK') {
                 return res.status(500).json({ error: { messsage: "Redis Client failed to store session" }, data: null, success: false });
             }
@@ -52,7 +54,14 @@ export default class authService {
     }
     static async RegistrationVerification(req : Request , res : Response) {
         try {
-            
+            let token = verificationTokenSchema.parse(req.params.token);
+            let jsonedUserInfo = await redisClient.get(`auth_verification_token:${token}`);
+            if (jsonedUserInfo === null) {
+                return res.status(400).json({ error: { message: 'please register again' }, data: null, success: false });
+            }
+            let {userID}= JSON.parse(jsonedUserInfo);
+            await User.findByIdAndUpdate(userID, { isVerified: true });
+            return res.status(200).json({ success: true, error: null, data: null });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error, success: false, data: null })
@@ -60,7 +69,29 @@ export default class authService {
     }
     static async Login(req : Request , res : Response) {
         try {
-            
+            let { error, data: validationResult } = loginSchema.safeParse(req.body);
+            if (error || !validationResult) {
+                return res.status(400).json({ error, data: null, success: false });
+            }
+            let user = await User.findOne({ email: validationResult.email });
+            if (!user) {
+                return res.status(403).json({ error: { message: 'invalid credentials' }, data: null, success: false });
+            }
+            let isPasswordEqual = bcrypt.compareSync(validationResult.password , user.passwordHash);
+            if (!isPasswordEqual) {
+                return res.status(400).json({ error: { message: 'Invalid credentials' }, data: null, success: false });
+            }
+
+            let jwtToken = jwt.sign({ userID: user._id} , JWT_SECRET!, { expiresIn : '7d'});
+            return res
+                .status(200)
+                .cookie('login_session', jwtToken, {
+                    httpOnly : true,
+                    sameSite : NODE_ENV === 'production' ? 'none' : 'lax',
+                    secure : NODE_ENV === 'production' ? true : false,
+                    maxAge: 7 * 24 * 60 * 60 * 1000
+                })
+                .json({ success: true, data: null, error: null });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error, success: false, data: null })

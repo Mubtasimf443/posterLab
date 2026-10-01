@@ -17,6 +17,7 @@ app.use(
         credentials : true
     })
 );
+app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api/upload', UploadRouter);
 app.use('/api/auth', authRouter);
