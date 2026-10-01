@@ -1,0 +1,69 @@
+/* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
+
+import type { Request, Response } from "express";
+import { registrationSchema } from "../utils/zod-schema/auth.schema.ts";
+import User from "../models/User.ts";
+import crypto from 'crypto'
+import redisClient from "../config/radis.ts";
+import { sendRegistrationVerificationEmail } from "../utils/mails/auth.mails.ts";
+import bcrypt from 'bcryptjs'
+
+export default class authService {
+    static async Register(req : Request , res : Response) {
+        try {
+            let { data: validationResult , error} = registrationSchema.safeParse(req.body);
+            if (error || !validationResult) {
+                return res.status(200).json({ error, success: false, data: null });
+            }
+            let existingUser = await User.findOne({ email: validationResult.email });
+
+            if (existingUser  ) {
+                if (existingUser.isVerified) {
+                    return res.status(403).json({ error: { message: 'You arleady have an account, please Login' }, success: false, data: null });
+                } else {
+                    let token = crypto.randomBytes(48).toString('hex').normalize();
+                    let isTokenStored = await redisClient.set(`auth_verification_token:${token}`, JSON.stringify({ userID: existingUser._id }));
+                    if (isTokenStored !== 'OK') {
+                        return res.status(500).json({ error: { messsage: "Redis Client failed to store session"}, data : null , success : false });
+                    }
+                    await sendRegistrationVerificationEmail({ name: existingUser.name, to: existingUser.email, token });
+                    return res.status(200).json({ success : true, data : null , error : null});
+                }
+            }
+            let salt = bcrypt.genSaltSync(12);
+            let passwordHash = bcrypt.hashSync(validationResult.password, salt);
+            let user =await User.create({
+                name :validationResult.name,
+                email : validationResult.email,
+                passwordHash ,
+                isVerified : false
+            });
+            let token = crypto.randomBytes(48).toString('hex').normalize();
+            let isTokenStored = await redisClient.set(`auth_verification_token:${token}`, JSON.stringify({ userID: user._id }));
+            if (isTokenStored !== 'OK') {
+                return res.status(500).json({ error: { messsage: "Redis Client failed to store session" }, data: null, success: false });
+            }
+            await sendRegistrationVerificationEmail({ name: user.name, to: user.email, token });
+            return res.status(200).json({ success: true, data : null , error : null })
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error, success: false, data: null })
+        }
+    }
+    static async RegistrationVerification(req : Request , res : Response) {
+        try {
+            
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error, success: false, data: null })
+        }
+    }
+    static async Login(req : Request , res : Response) {
+        try {
+            
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error, success: false, data: null })
+        }
+    }
+}
