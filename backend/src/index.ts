@@ -7,6 +7,8 @@ import { UploadRouter } from './routes/upload.route.ts';
 import morgan from 'morgan'
 import { authRouter } from './routes/auth.route.ts';
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
+
 const app = express();
 
 connectDB();
@@ -17,6 +19,7 @@ app.use(
         credentials : true
     })
 );
+app.use(cookieParser())
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api/upload', UploadRouter);

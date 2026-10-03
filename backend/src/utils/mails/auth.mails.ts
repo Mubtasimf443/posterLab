@@ -23,7 +23,7 @@ export async function sendRegistrationVerificationEmail({
     token,
 }: SendVerificationEmailParams) {
     const baseUrl = CLIENT_ORIGIN ?? "http://localhost:3000";
-    const verifyUrl = `${baseUrl}/verify-email?token=${encodeURIComponent(token)}`;
+    const verifyUrl = `${baseUrl}/sign-up-verification?token=${encodeURIComponent(token)}`;
     const safeName = escapeHtml(name);
     return mailer.sendMail({
         from: `"${APP_NAME}" <${SMTP_USER}>`,
@@ -46,7 +46,7 @@ export async function sendRegistrationVerificationEmail({
             </a>
           </p>
           <p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:#6b7280;">
-            This link will expire in 24 hours. If the button doesn't work, copy and paste this URL into your browser:
+            This link will expire in 100 seconds. If the button doesn't work, copy and paste this URL into your browser:
           </p>
           <p style="margin:0 0 24px;font-size:13px;word-break:break-all;color:#4f46e5;">${verifyUrl}</p>
           <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />

@@ -1,0 +1,56 @@
+/* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
+
+import { model, Schema } from "mongoose";
+import { required } from "zod/mini";
+
+interface ITemplate{
+    title : string ;
+    occasionType : string, 
+    thumbnailUrl: string, 
+    layoutConfig : {
+        photoSlots : string[];
+        textSlots : string[];
+        colorScheme :{
+            primary: string;
+            secondary : string;
+            accent : string;
+        }
+    },
+    createdAt : Date
+}
+
+const templateSchema= new Schema<ITemplate>({
+    title : {
+        type : String,
+        required: true,
+    },
+    occasionType : {
+        type : String,
+        required: true,
+    },
+    thumbnailUrl : {
+        type : String,
+        required : true
+    },
+    layoutConfig :{
+        photoSlots : [{
+            type : String,
+            required : true
+        }],
+        textSlots : [{
+            type: String,
+            required : true
+        }],
+        colorScheme : [{
+            type: String,
+            required : true
+        }]
+    },
+    createdAt : {
+        type : Date,
+        required : true,
+        default : Date.now
+    }
+})
+
+const Templates= model<ITemplate>('Templates', templateSchema);

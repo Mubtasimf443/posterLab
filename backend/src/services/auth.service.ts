@@ -73,7 +73,7 @@ export default class authService {
             if (error || !validationResult) {
                 return res.status(400).json({ error, data: null, success: false });
             }
-            let user = await User.findOne({ email: validationResult.email });
+            let user = await User.findOne({ email: validationResult.email, isVerified: true, role : 'user' });
             if (!user) {
                 return res.status(403).json({ error: { message: 'invalid credentials' }, data: null, success: false });
             }
@@ -92,6 +92,61 @@ export default class authService {
                     maxAge: 7 * 24 * 60 * 60 * 1000
                 })
                 .json({ success: true, data: null, error: null });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error, success: false, data: null })
+        }
+    }
+
+    static async AdminLogin(req : Request, res : Response ) {
+        try {
+            let { error, data: validationResult } = loginSchema.safeParse(req.body);
+            if (error || !validationResult) {
+                return res.status(400).json({ error, data: null, success: false });
+            }
+            let user = await User.findOne({ email: validationResult.email, isVerified: true, role : 'admin' });
+            if (!user) {
+                return res.status(403).json({ error: { message: 'invalid credentials' }, data: null, success: false });
+            }
+            let isPasswordEqual = bcrypt.compareSync(validationResult.password , user.passwordHash);
+            if (!isPasswordEqual) {
+                return res.status(400).json({ error: { message: 'Invalid credentials' }, data: null, success: false });
+            }
+
+            let jwtToken = jwt.sign({ adminId: user._id} , JWT_SECRET!, { expiresIn : '7d'});
+            return res
+                .status(200)
+                .cookie('admin_login_session', jwtToken, {
+                    httpOnly : true,
+                    sameSite : NODE_ENV === 'production' ? 'none' : 'lax',
+                    secure : NODE_ENV === 'production' ? true : false,
+                    maxAge: 7 * 24 * 60 * 60 * 1000
+                })
+                .json({ success: true, data: null, error: null });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error, success: false, data: null })
+        }
+    }
+
+    static async UserDetails(req : Request, res : Response ) {
+        try {
+            let userId = req.user_id;
+            let user = await User.findById(userId, 'name email _id');
+            if (!user) {
+                return res.status(401).json({ error: { message: 'No User found from the email id:' + userId }, data: null, success: false });
+            }
+            return res.status(200).json({ data: { user }, success: true, error: null });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error, success: false, data: null })
+        }
+    }
+
+    static async isAdmin(req : Request, res : Response ) {
+        try {
+            let admin_id= req.admin_id;
+            return res.status(200).json({ admin_id });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error, success: false, data: null })
