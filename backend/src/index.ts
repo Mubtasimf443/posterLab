@@ -8,6 +8,7 @@ import morgan from 'morgan'
 import { authRouter } from './routes/auth.route.ts';
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import { postersRouter } from './routes/poster.route.ts';
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api/upload', UploadRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/admin', authRouter);
+app.use('/api/posters', postersRouter);
 
 
 app.listen(PORT!, () => {

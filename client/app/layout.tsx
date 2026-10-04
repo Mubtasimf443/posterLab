@@ -6,6 +6,7 @@ import { ReactNode } from 'react'
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/common/utils";
 import { Toaster } from "@/components/shadcn/toast";
+import { TooltipProvider } from "@/components/shadcn/tooltip";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -22,7 +23,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="min-h-full flex flex-col">
         <main>
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
+          
         </main>
         <Toaster />
       </body>

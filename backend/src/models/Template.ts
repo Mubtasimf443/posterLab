@@ -54,3 +54,5 @@ const templateSchema= new Schema<ITemplate>({
 })
 
 const Templates= model<ITemplate>('Templates', templateSchema);
+
+export default Templates;
