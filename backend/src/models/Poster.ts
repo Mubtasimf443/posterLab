@@ -13,7 +13,7 @@ export interface IPoster {
     templateId: Types.ObjectId;
     formData : IFormData;
     uploadedPhotoUrls : string[];
-    generatedImageUrl : string;
+    generatedImageUrl ?: string;
     status : 'draft' | 'generating' | 'completed' | 'failed';
     createdAt : Date
 }
@@ -48,7 +48,7 @@ const PosterSchema = new Schema<IPoster>({
         },
     },
     uploadedPhotoUrls: [{ type: String, required: true }],
-    generatedImageUrl: { type: String, required: true },
+    generatedImageUrl: { type: String, required: false },
     status : {
         type :String,
         enum: ['draft', 'generating', 'completed', 'failed']

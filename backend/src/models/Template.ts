@@ -1,7 +1,6 @@
 /* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
 
 import { model, Schema } from "mongoose";
-import { required } from "zod/mini";
 
 interface ITemplate{
     title : string ;
@@ -41,10 +40,11 @@ const templateSchema= new Schema<ITemplate>({
             type: String,
             required : true
         }],
-        colorScheme : [{
-            type: String,
-            required : true
-        }]
+        colorScheme: {
+            primary: String,
+            secondary: String,
+            accent: String
+        }
     },
     createdAt : {
         type : Date,

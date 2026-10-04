@@ -1,5 +1,6 @@
 /* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
 import { z } from 'zod'
+import { bangladeshiOccasions } from '../../data/occasions.ts'
 
 const HEX_COLOR = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/
 
@@ -11,11 +12,7 @@ export const templateSchema = z.object(
             .min(1, 'Title cannot be empty')
             .max(100, 'Title must be at most 100 characters'),
 
-        occasionType: z
-            .string('Occasion type is required')
-            .trim()
-            .min(1, 'Occasion type cannot be empty')
-            .max(50, 'Occasion type must be at most 50 characters'),
+        occasionType: z.enum(bangladeshiOccasions),
 
         thumbnailUrl: z
             .string('Thumbnail URL is required')

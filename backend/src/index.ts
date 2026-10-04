@@ -9,6 +9,8 @@ import { authRouter } from './routes/auth.route.ts';
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { postersRouter } from './routes/poster.route.ts';
+import { TemplatesRouter } from './routes/templates.route.ts';
+import { AdminRouter } from './routes/admin.routes.ts';
 
 const app = express();
 
@@ -25,8 +27,9 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api/upload', UploadRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/admin', authRouter);
+app.use('/api/admin', AdminRouter);
 app.use('/api/posters', postersRouter);
+app.use('/api/templates', TemplatesRouter);
 
 
 app.listen(PORT!, () => {

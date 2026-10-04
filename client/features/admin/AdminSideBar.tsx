@@ -21,9 +21,9 @@ const templateItems = [
     { title: 'Template List', url: '/admin/templates', icon: LayoutTemplate },
 ]
 
-const userItems = [
-    { title: 'User List', url: '/admin/users', icon: Users },
-]
+// const userItems = [
+//     { title: 'User List', url: '/admin/users', icon: Users },
+// ]
 
 export default function AdminSideBar() {
     return (
@@ -76,7 +76,7 @@ export default function AdminSideBar() {
                 </SidebarGroup>
 
                 {/* Users group */}
-                <SidebarGroup>
+                {/* <SidebarGroup>
                     <SidebarGroupLabel className="text-lg">Users</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
@@ -92,7 +92,7 @@ export default function AdminSideBar() {
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
-                </SidebarGroup>
+                </SidebarGroup> */}
             </SidebarContent>
 
             <SidebarFooter />

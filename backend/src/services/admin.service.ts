@@ -1,6 +1,6 @@
 /* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
 
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import templateSchema from "../utils/zod-schema/templates.schema.ts";
 import Templates from "../models/Template.ts";
 import { isValidObjectId } from "mongoose";
