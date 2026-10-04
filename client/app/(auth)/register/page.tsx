@@ -46,6 +46,7 @@ export default function page() {
       }
      
       if (response.status >= 500) {
+        
         toast.add({
           title: 'Server error',
           description: 'Something went wrong on our side. Please try again in a moment.',

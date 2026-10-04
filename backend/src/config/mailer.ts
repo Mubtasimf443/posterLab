@@ -1,7 +1,7 @@
 /* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
 
 import nodemailer from 'nodemailer';
-import { SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from './env.ts';
+import { NODE_ENV, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from './env.ts';
 
 
 export const mailer = nodemailer.createTransport({
@@ -11,6 +11,7 @@ export const mailer = nodemailer.createTransport({
         user: SMTP_USER,
         pass: SMTP_PASS,
     },
+    secure : NODE_ENV === 'production',
     tls: {
         rejectUnauthorized: false,
         ciphers:'SSLv3'
@@ -19,5 +20,4 @@ export const mailer = nodemailer.createTransport({
     dnsTimeout : 3000,
     socketTimeout : 3000,
     greetingTimeout : 3000
-    
 })

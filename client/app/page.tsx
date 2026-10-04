@@ -37,10 +37,10 @@ export default function HomePage() {
  
           <button
             type="button"
-            onClick={() => router.push("/account")}
+            onClick={() => router.push("/account/posters/create")}
             className="rounded-xl bg-[#2D5CAB] px-8 py-4 text-lg font-bold text-white shadow-[5px_5px_0_#10244A] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#274f94] hover:shadow-[3px_3px_0_#10244A] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2D5CAB] motion-reduce:transition-none"
           >
-            Generate poster
+            Create poster
           </button>
           <p className="mt-4 text-sm text-slate-500">
             Free to start. No design skills needed.
