@@ -11,7 +11,7 @@ export const mailer = nodemailer.createTransport({
         user: SMTP_USER,
         pass: SMTP_PASS,
     },
-    secure : NODE_ENV === 'production',
+    secure :false,
     tls: {
         rejectUnauthorized: false,
         ciphers:'SSLv3'

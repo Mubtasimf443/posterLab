@@ -56,7 +56,7 @@ export async function sendRegistrationVerificationEmail({
         </td>
       </tr>
     </table>
-  </div>`
+        </div>`
     });
 }
 
