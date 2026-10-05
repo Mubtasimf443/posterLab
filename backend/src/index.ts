@@ -42,22 +42,6 @@ mailer.verify((error, success) => {
     }
 });
 
-function getLocalIpAddress() {
-    const interfaces :any= os.networkInterfaces();
-    for (const interfaceName in interfaces) {
-        for (const iface of interfaces[interfaceName]) {
-            // Skip over internal (loopback like 127.0.0.1) and non-IPv4 addresses
-            if (iface.family === 'IPv4' && !iface.internal) {
-                return iface.address;
-            }
-        }
-    }
-    return '127.0.0.1';
-}
-
-console.log("Local Network IP:", getLocalIpAddress());
-
-
 app.listen(PORT!, () => {
     console.log('Alhamdulillah, Server is runing on PORT:'+ PORT);
 });
