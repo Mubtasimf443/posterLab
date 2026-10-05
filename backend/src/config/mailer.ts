@@ -6,7 +6,7 @@ import { NODE_ENV, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from './env.ts';
 
 export const mailer = nodemailer.createTransport({
     host : SMTP_HOST,
-    port:SMTP_PORT,
+    port:Number(SMTP_PORT),
     auth: {
         user: SMTP_USER,
         pass: SMTP_PASS,

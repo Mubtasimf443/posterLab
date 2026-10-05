@@ -15,7 +15,7 @@ export default class authService {
         try {
             let { data: validationResult , error} = registrationSchema.safeParse(req.body);
             if (error || !validationResult) {
-                return res.status(200).json({ error, success: false, data: null });
+                return res.status(400).json({ error, success: false, data: null });
             }
             let existingUser = await User.findOne({ email: validationResult.email });
 
