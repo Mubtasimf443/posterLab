@@ -43,7 +43,7 @@ mailer.verify((error, success) => {
 });
 
 function getLocalIpAddress() {
-    const interfaces = os.networkInterfaces();
+    const interfaces :any= os.networkInterfaces();
     for (const interfaceName in interfaces) {
         for (const iface of interfaces[interfaceName]) {
             // Skip over internal (loopback like 127.0.0.1) and non-IPv4 addresses
