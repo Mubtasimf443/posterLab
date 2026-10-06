@@ -27,3 +27,5 @@ export const SMTP_PASS = process.env.SMTP_PASS;
 // REDIS
 export const REDIS_URL = process.env.REDIS_URL;
 export const REDIS_HOST = process.env.REDIS_HOST;
+// GOOGLE GEN AI
+export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;

@@ -51,7 +51,8 @@ const PosterSchema = new Schema<IPoster>({
     generatedImageUrl: { type: String, required: false },
     status : {
         type :String,
-        enum: ['draft', 'generating', 'completed', 'failed']
+        enum: ['draft', 'generating', 'completed', 'failed'],
+        default : 'draft'
     },
     createdAt : {
         type : Date,

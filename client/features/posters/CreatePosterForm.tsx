@@ -26,7 +26,8 @@ interface ITemplate {
     },
     createdAt: Date
 }
-export default function CreatePosterForm() {
+
+export default function CreatePosterForm({ setPosterUrl }: { setPosterUrl: (value : string) => void }) {
     const photoInputRef = useRef<HTMLInputElement>(null);
     let [templateId, setTemplateId] = useState<string>('');
     let [templates, setTemplates] = useState<ITemplate[]>([]);
@@ -147,9 +148,14 @@ export default function CreatePosterForm() {
             });
 
             if (response.ok) {
+                let jsonData = await response.json();
+                setPosterUrl(jsonData.data.poster.url);
+                console.log(jsonData.data.poster.aiResponse );
+                
                 toast.add({ title: 'Poster created' })
             } else {
                 console.log(await response.json());
+                toast.add({ title: 'Failed to Create Posters' })
             }
         } catch (error) {
             console.error(error);

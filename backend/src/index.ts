@@ -34,13 +34,6 @@ app.use('/api/admin', AdminRouter);
 app.use('/api/posters', postersRouter);
 app.use('/api/templates', TemplatesRouter);
 
-mailer.verify((error, success) => {
-    if (error) {
-        console.error("SMTP verification failed:", error);
-    } else {
-        console.log("SMTP server is ready");
-    }
-});
 
 app.listen(PORT!, () => {
     console.log('Alhamdulillah, Server is runing on PORT:'+ PORT);
