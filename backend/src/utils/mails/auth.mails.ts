@@ -1,5 +1,6 @@
 /* بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ﷺ InshaAllah */
 
+import brevo from "../../config/brevo.ts";
 import { APP_NAME, CLIENT_ORIGIN, SMTP_USER } from "../../config/env.ts";
 import { mailer } from "../../config/mailer.ts";
 
@@ -25,11 +26,15 @@ export async function sendRegistrationVerificationEmail({
     const baseUrl = CLIENT_ORIGIN ?? "http://localhost:3000";
     const verifyUrl = `${baseUrl}/sign-up-verification?token=${encodeURIComponent(token)}`;
     const safeName = escapeHtml(name);
-    return mailer.sendMail({
-        from: `"${APP_NAME}" <${SMTP_USER}>`,
-        to,
-        subject: `Verify your email for ${APP_NAME}`,
-        html: `
+
+    let result= await brevo.transactionalEmails.sendTransacEmail({
+      sender : {
+        name : APP_NAME,
+        email : SMTP_USER
+      },
+      to: [{ email: to }],
+      subject : `Verify your email for ${APP_NAME}`,
+      htmlContent :  `
   <div style="background:#f4f4f7;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;">
     <table role="presentation" width="100%" style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;padding:32px;">
       <tr>
@@ -58,5 +63,7 @@ export async function sendRegistrationVerificationEmail({
     </table>
         </div>`
     });
+
+    console.log("Email sent:", result.messageId);
 }
 
