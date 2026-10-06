@@ -11,5 +11,6 @@ router.use(userMiddleware);
 router.post('/', PosterService.createPosters);
 router.get('/:id', PosterService.getPosterStatus);
 router.get('/user/:userId', PosterService.geUserPostersList);
+router.post('/:id/regenerate', PosterService.regeneratePoster);
 
 export { router as postersRouter }
